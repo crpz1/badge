@@ -5,16 +5,31 @@
  */
 
 // Components
-import App from './App.vue'
+import App from './App.vue';
+import MainPage from "@/components/MainPage.vue";
+import UploadPage from "@/components/UploadPage.vue";
 
 // Composables
-import { createApp } from 'vue'
+import { createApp } from 'vue';
 
 // Plugins
-import { registerPlugins } from '@/plugins'
+import { registerPlugins } from '@/plugins';
 
-const app = createApp(App)
+import { createRouter } from 'vue-router';
+import { createWebHistory } from 'vue-router';
 
-registerPlugins(app)
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        { path: "/", name: "Home", component: MainPage },
+        { path: "/upload", name: "Upload", component: UploadPage },
+    ]
+});
 
-app.mount('#app')
+const app = createApp(App);
+
+registerPlugins(app);
+
+app.use(router);
+
+app.mount('#app');

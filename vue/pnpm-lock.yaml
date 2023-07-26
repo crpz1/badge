@@ -2,6 +2,7 @@ dependencies:
   '@mdi/font': 7.0.96
   roboto-fontface: 0.10.0
   vue: 3.3.4
+  vue-router: 4.2.4_vue@3.3.4
   vuetify: 3.3.9_0eb596aeac982bd9b20423abdfc95ade
   webfontloader: 1.6.28
 devDependencies:
@@ -408,6 +409,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-m0v6oKpup2nMSehwA6Uuu+j+wEwcy7QmwMkVNVfrV9P2qE5KshC6RwOCq8fjGS/Eak/uNb8AaWekfiXxbBB6gQ==
+  /@vue/devtools-api/6.5.0:
+    dev: false
+    resolution:
+      integrity: sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q==
   /@vue/reactivity-transform/3.3.4:
     dependencies:
       '@babel/parser': 7.22.7
@@ -1356,6 +1361,15 @@ packages:
       eslint: '>=6.0.0'
     resolution:
       integrity: sha512-Clr85iD2XFZ3lJ52/ppmUDG/spxQu6+MAeHXjjyI4I1NUYZ9xmenQp4N0oaHJhrA8OOxltCVxMRfANGa70vU0g==
+  /vue-router/4.2.4_vue@3.3.4:
+    dependencies:
+      '@vue/devtools-api': 6.5.0
+      vue: 3.3.4
+    dev: false
+    peerDependencies:
+      vue: ^3.2.0
+    resolution:
+      integrity: sha512-9PISkmaCO02OzPVOMq2w82ilty6+xJmQrarYZDkjZBfl4RvYAlt4PKnEX21oW4KTtWfa9OuO/b3qk1Od3AEdCQ==
   /vue/3.3.4:
     dependencies:
       '@vue/compiler-dom': 3.3.4
@@ -1432,5 +1446,6 @@ specifiers:
   vite: ^4.2.0
   vite-plugin-vuetify: ^1.0.0
   vue: ^3.2.0
+  vue-router: ^4.2.4
   vuetify: ^3.0.0
   webfontloader: ^1.0.0
