@@ -1,15 +1,5 @@
 <template>
-  <v-app-bar>
-    <template v-slot:prepend>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-    </template>
-    <v-app-bar-title>Upload</v-app-bar-title>
-  </v-app-bar>
-  <v-navigation-drawer v-model="drawer" temporary>
-    <v-list>
-      <v-list-item prepend-icon="mdi-upload" title="Upload" value="upload" href="/a"></v-list-item>
-    </v-list>
-  </v-navigation-drawer>
+  <NavigationBar></NavigationBar>
   <v-container class="fill-height">
     <v-responsive class="align-center text-center fill-height">
       <v-img height="300" src="@/assets/logo.svg" />
@@ -82,6 +72,7 @@
 </template>
 
 <script setup>
+  import NavigationBar from './NavigationBar.vue';
   //
 </script>
 
