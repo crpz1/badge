@@ -1,9 +1,10 @@
-from urllib.request import Request
-from sanic import Sanic
-from sanic.response import file, text
+from sanic import Sanic, json
+from sanic.response import file, text, JSONResponse
 from sanic.request import Request, File
 import asyncio
 import aiofiles
+from aiofiles.os import scandir
+from os import DirEntry
 
 app = Sanic(name="badge");
 
@@ -21,6 +22,16 @@ async def upload_image(req: Request):
         await f.write(file.body)
     return text("done")
 
+@app.get("/enumerate_images")
+async def enumerate_images(req: Request):
+    res: JSONResponse = json([], headers={"Access-Control-Allow-Origin": "*"})
+    files = await scandir("./uploads")
+    file: DirEntry
+    for file in files:
+        res.append({"path": "/uploads/" + file.name})
+    return res
+
+app.static("/uploads", "./uploads", name="uploads")
 async def main():
     # inky init
     app.run(debug=True, host="0.0.0.0")
