@@ -1,5 +1,6 @@
 <template>
   <NavigationBar></NavigationBar>
+  <v-progress-linear :active="uploading" :model-value="progress"></v-progress-linear>
   <v-container class="fill-height">
     <v-responsive class="align-center text-center fill-height">
       <v-btn prepend-icon="mdi-upload" @click.stop="openFilePicker()">
@@ -18,15 +19,23 @@
 </script>
 
 <script>
-function openFilePicker() {
-  document.getElementById('file').click()
-}
+  import { ref } from "vue";
+  let showBar = ref(false);
+  let count = ref(0);
 
-function doFileUpload() {
-  const picker = document.getElementById('file');
-  if (picker.files.length == 0) {
-    return;
+  function openFilePicker() {
+    document.getElementById('file').click()
+    showBar.value = false;
   }
+
+  function doFileUpload() {
+    const picker = document.getElementById('file');
+    if (picker.files.length == 0) {
+      return;
+  }
+  showBar.value = true;
+  count.value = 0;
+  const perItem = 100 / picker.files.length;
   Array.from(picker.files).forEach(file => {
     console.log(file);
     const form = new FormData();
@@ -35,7 +44,22 @@ function doFileUpload() {
       method: "POST",
       body: form,
       mode: "no-cors"
-    }).then(_ => console.log(1))
+    }).then(() => count.value += perItem)
   })
 }
+
+export default {
+    data: () => ({
+      uploading: showBar,
+      progress: count,
+      group: null,
+    }),
+
+    watch: {
+      group () {
+        this.uploading = showBar,
+        this.progress = count;
+      },
+    },
+  }
 </script>
