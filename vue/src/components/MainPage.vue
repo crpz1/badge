@@ -26,6 +26,7 @@
   let loading = ref(false);
 
   function selectImage(a) {
+    if (loading.value) return;
     loading.value = true
     fetch("http://hyperdeath.local:8000/pick_image", {
       method: "POST",
