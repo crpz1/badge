@@ -1,92 +1,54 @@
 <template>
  <NavigationBar></NavigationBar>
+ <v-progress-linear :active="isActive" height="4" indeterminate></v-progress-linear>
   <v-container class="fill-height">
     <v-responsive class="align-center text-center fill-height">
-      <v-img height="300" src="@/assets/logo.svg" />
-
-      <div class="text-body-2 font-weight-light mb-n1">Welcome to</div>
-
-      <h1 class="text-h2 font-weight-bold">Vuetify</h1>
-
-      <div class="py-14" />
-
-      <v-row class="d-flex align-center justify-center">
-        <v-col cols="auto">
-          <v-btn
-            href="https://vuetifyjs.com/components/all/"
-            min-width="164"
-            rel="noopener noreferrer"
-            target="_blank"
-            variant="text"
-          >
-            <v-icon
-              icon="mdi-view-dashboard"
-              size="large"
-              start
-            />
-
-            Components
-          </v-btn>
-        </v-col>
-
-        <v-col cols="auto">
-          <v-btn
-            color="primary"
-            href="https://vuetifyjs.com/introduction/why-vuetify/#feature-guides"
-            min-width="228"
-            rel="noopener noreferrer"
-            size="x-large"
-            target="_blank"
-            variant="flat"
-          >
-            <v-icon
-              icon="mdi-speedometer"
-              size="large"
-              start
-            />
-
-            Get Started
-          </v-btn>
-        </v-col>
-
-        <v-col cols="auto">
-          <v-btn
-            href="https://community.vuetifyjs.com/"
-            min-width="164"
-            rel="noopener noreferrer"
-            target="_blank"
-            variant="text"
-          >
-            <v-icon
-              icon="mdi-account-group"
-              size="large"
-              start
-            />
-
-            Community
-          </v-btn>
-        </v-col>
-      </v-row>
+      <v-card class="mx-auto" v-for="image in images" :key="image" style="margin-bottom: 1em">
+        <v-img :src="'http://hyperdeath.local:8000' + image.path" cover @click.stop="selectImage"></v-img>
+        <v-card-title>{{ image.path }}</v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn icon="mdi-check" @click.stop="selectImage"></v-btn>
+          <v-btn icon="mdi-delete"></v-btn>
+        </v-card-actions>
+      </v-card>
     </v-responsive>
   </v-container>
 </template>
 
 <script setup>
-  import NavigationBar from './NavigationBar.vue';
+  import NavigationBar from './NavigationBar.vue'; 
   //
 </script>
 
 <script>
+  import { ref } from "vue";
+  let loading = ref(false);
+
+  function selectImage(a) {
+    loading.value = true
+    fetch("http://hyperdeath.local:8000/pick_image", {
+      method: "POST",
+      body: JSON.stringify({image: a.currentTarget.parentElement.children[2].innerText}),
+      mode: "no-cors"
+    }).then(() => loading.value = false)
+  }
+
   export default {
     data: () => ({
-      drawer: false,
+      images: {},
       group: null,
+      isActive: loading
     }),
 
     watch: {
       group () {
-        this.drawer = false
+        this.images = {}
       },
     },
+
+    beforeMount() {
+      fetch("http://hyperdeath.local:8000/enumerate_images").then(res => res.json()).then(obj => this.images = obj)
+    }
   }
 </script>

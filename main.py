@@ -5,6 +5,8 @@ import asyncio
 import aiofiles
 from aiofiles.os import scandir
 from os import DirEntry
+from inky.mock import InkyMockImpression as Inky
+from PIL import Image
 
 app = Sanic(name="badge");
 
@@ -30,6 +32,16 @@ async def enumerate_images(req: Request):
     for file in files:
         res.append({"path": "/uploads/" + file.name})
     return res
+
+@app.post("/pick_image")
+async def pick_image(req: Request):
+    display = Inky()
+    image = Image.open("." + req.json["image"])
+    resizedimage = image.resize(display.resolution)
+    display.set_image(resizedimage, saturation=1)
+    display.show()
+    display.wait_for_window_close()
+    return text("done")
 
 app.static("/uploads", "./uploads", name="uploads")
 async def main():
