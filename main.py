@@ -1,18 +1,14 @@
 from sanic import Sanic, json
-from sanic.response import file, text, JSONResponse
+from sanic.response import file, text, empty, JSONResponse
 from sanic.request import Request, File
 import asyncio
 import aiofiles
-from aiofiles.os import scandir
+from aiofiles.os import scandir, remove
 from os import DirEntry
 from inky.mock import InkyMockImpression as Inky
 from PIL import Image
 
 app = Sanic(name="badge");
-
-@app.get("/")
-async def index(req):
-    return await file("./static/index.html")
 
 @app.post("/upload_image")
 async def upload_image(req: Request):
@@ -44,6 +40,20 @@ async def pick_image(req: Request):
     return text("done")
 
 app.static("/uploads", "./uploads", name="uploads")
+@app.delete("/uploads/<file>")
+async def delete_image(req: Request, file: str):
+    try:
+        await remove("./uploads/" + file)
+    except FileNotFoundError as e:
+        raise e
+    return text("done", headers={"Access-Control-Allow-Origin": "*"})
+
+@app.get("/uploads/<filename>")
+async def get_image(req: Request, filename: str):
+    return await file("./uploads/" + filename)
+
+app.static("/", "./vue/dist", index="index.html")
+
 async def main():
     # inky init
     app.run(debug=True, host="0.0.0.0")
