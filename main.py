@@ -51,6 +51,9 @@ async def delete_image(req: Request, file: str):
 @app.get("/uploads/<filename>")
 async def get_image(req: Request, filename: str):
     return await file("./uploads/" + filename)
+@app.options("/uploads/<filename>")
+async def fuck_cors(req: Request, filename: str):
+    return empty(headers={"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "*", "Origin": "http://localhost:8000"})
 
 app.static("/", "./vue/dist", index="index.html")
 
