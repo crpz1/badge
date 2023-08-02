@@ -1,0 +1,4 @@
+.fade-animation {
+    transition: filter 0.25s ease-in;
+    filter: brightness(25%);
+}
