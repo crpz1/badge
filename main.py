@@ -3,8 +3,8 @@ from sanic.response import file, text, empty, JSONResponse
 from sanic.request import Request, File
 import asyncio
 import aiofiles
-from aiofiles.os import scandir, remove
-from os import DirEntry
+from aiofiles.os import scandir
+from os import DirEntry, remove
 from inky.mock import InkyMockImpression as Inky
 from PIL import Image
 
@@ -40,17 +40,22 @@ async def pick_image(req: Request):
     return text("done")
 
 app.static("/uploads", "./uploads", name="uploads")
-@app.delete("/uploads/<file>")
-async def delete_image(req: Request, file: str):
+
+@app.delete("/uploads/<filename>")
+async def delete_image(req: Request, filename: str):
     try:
-        await remove("./uploads/" + file)
+        remove("./uploads/" + filename)
+        return text("done", headers={"Access-Control-Allow-Origin": "*"})
     except FileNotFoundError as e:
-        raise e
-    return text("done", headers={"Access-Control-Allow-Origin": "*"})
+        return empty(status=404)
 
 @app.get("/uploads/<filename>")
 async def get_image(req: Request, filename: str):
-    return await file("./uploads/" + filename)
+    try:
+        return await file("./uploads/" + filename)
+    except FileNotFoundError as e:
+        return empty(status=404)
+
 @app.options("/uploads/<filename>")
 async def fuck_cors(req: Request, filename: str):
     return empty(headers={"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "*", "Origin": "http://localhost:8000"})
