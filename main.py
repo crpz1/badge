@@ -5,10 +5,16 @@ import asyncio
 import aiofiles
 from aiofiles.os import scandir
 from os import DirEntry, remove
-from inky.mock import InkyMockImpression as Inky
 from PIL import Image
 
-app = Sanic(name="badge");
+try:
+    from inky.auto import auto as Inky
+except:
+    from inky.mock import InkyMockImpression as Inky
+
+app = Sanic(name="badge")
+mode = "image"
+current_image: str = None
 
 @app.post("/upload_image")
 async def upload_image(req: Request):
@@ -36,7 +42,10 @@ async def pick_image(req: Request):
     resizedimage = image.resize(display.resolution)
     display.set_image(resizedimage, saturation=1)
     display.show()
-    display.wait_for_window_close()
+    try: 
+        display.wait_for_window_close()
+    except:
+        pass
     return text("done")
 
 app.static("/uploads", "./uploads", name="uploads")
