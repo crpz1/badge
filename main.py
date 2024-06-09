@@ -37,6 +37,8 @@ async def enumerate_images(req: Request):
 
 @app.post("/pick_image")
 async def pick_image(req: Request):
+    mode = "image"
+    current_image = req.json["image"]
     display = Inky()
     image = Image.open("." + req.json["image"])
     resizedimage = image.resize(display.resolution)
@@ -47,6 +49,13 @@ async def pick_image(req: Request):
     except:
         pass
     return text("done")
+
+@app.get("/status")
+async def status(req: Request):
+    res: JSONResponse = json({"currentDisplay": mode}, headers={"Access-Control-Allow-Origin": "*"})
+    if mode == "image": 
+        res.append({"displayData": {"image": current_image}})
+    return res
 
 app.static("/uploads", "./uploads", name="uploads")
 
