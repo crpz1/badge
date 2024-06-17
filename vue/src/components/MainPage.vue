@@ -1,6 +1,6 @@
 <template>
  <NavigationBar></NavigationBar>
- <v-progress-linear :active="isActive" height="4" indeterminate></v-progress-linear>
+ <v-progress-linear class="position-fixed" style="top: 64px; z-index: 1;" :active="isActive" height="4" indeterminate></v-progress-linear>
   <v-container :class="fade.join(' ')">
     <v-responsive class="align-center text-center fill-height">
       <v-card class="mx-auto" v-for="image in images" :key="image" style="margin-bottom: 1em">
