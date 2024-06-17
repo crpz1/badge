@@ -1,3 +1,4 @@
+import os
 from sanic import Sanic, json
 from sanic.response import file, text, empty, JSONResponse
 from sanic.request import Request, File
@@ -7,6 +8,8 @@ from aiofiles.os import scandir
 from os import DirEntry, remove
 from PIL import Image
 
+import buttons
+
 try:
     from inky.auto import auto as Inky
 except:
@@ -15,6 +18,10 @@ except:
 app = Sanic(name="badge")
 mode = "image"
 current_image: str = None
+
+def button_press(button):
+    if button == 3:
+        import imagedraw
 
 @app.post("/upload_image")
 async def upload_image(req: Request):
@@ -78,10 +85,12 @@ async def get_image(req: Request, filename: str):
 async def fuck_cors(req: Request, filename: str):
     return empty(headers={"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "*", "Origin": "http://localhost:8000"})
 
-app.static("/", "./vue/dist", index="index.html")
+app.static("/", "./dist", index="index.html")
 
 async def main():
     # inky init
+    if os.name != "nt":
+        buttons.init(button_press)
     app.run(debug=True, host="0.0.0.0")
     ...
 
