@@ -6,6 +6,23 @@ import ngrok
 import qrcode
 import dotenv
 
+class PlaceholderListener:
+    text = ""
+    def set(self, a):
+        self.text = a
+    def url(self):
+        return self.text
+
+def wrap(str):
+    count = 0
+    out_str = ""
+    for char in str:
+        count += 1
+        if count % 64 == 0:
+            out_str += "\n"
+        out_str += char
+    return out_str
+
 try:
     import smbus2 as _
     from inky.auto import auto as Inky
@@ -15,17 +32,22 @@ except:
 dotenv.load_dotenv()
 
 network_up = False
+qr_img = Image.new("RGBA", [1, 1])
+listener = PlaceholderListener()
 
-listener = ngrok.forward(8000, authtoken_from_env=True, domain=os.environ.get("NGROK_DOMAIN"))
-qr = qrcode.QRCode(
-    version=1,
-    error_correction=qrcode.constants.ERROR_CORRECT_L,
-    box_size=5,
-    border=2,
-)
-qr.add_data(listener.url())
-qr.make(fit=True)
-qr_img = qr.make_image(fill_color="black", back_color="white")
+try:
+    listener = ngrok.forward(8000, authtoken_from_env=True, domain=os.environ.get("NGROK_DOMAIN"))
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=5,
+        border=2,
+    )
+    qr.add_data(listener.url())
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color="black", back_color="white")
+except Exception as e: 
+    listener.set(wrap(str(e)))
 
 if os.name != "nt":
     with open("/sys/class/net/wlan0/operstate", "r") as f:
