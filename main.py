@@ -1,3 +1,4 @@
+import io
 import os
 from sanic import Sanic, json
 from sanic.response import file, text, empty, JSONResponse
@@ -6,12 +7,12 @@ import asyncio
 import aiofiles
 from aiofiles.os import scandir
 from os import DirEntry, remove
-from PIL import Image
-
-import buttons
+from PIL import Image, ImageEnhance
 
 try:
+    import smbus2 as _
     from inky.auto import auto as Inky
+    import buttons
 except:
     from inky.mock import InkyMockImpression as Inky
 
@@ -44,6 +45,7 @@ async def enumerate_images(req: Request):
 
 @app.post("/pick_image")
 async def pick_image(req: Request):
+    global mode, current_image
     mode = "image"
     current_image = req.json["image"]
     display = Inky()
@@ -56,6 +58,27 @@ async def pick_image(req: Request):
     except:
         pass
     return text("done")
+
+@app.get("/preview_image")
+async def preview_image(req: Request):
+    global current_image
+    display = Inky()
+    original_image: Image.Image = Image.open("." + current_image)
+    resized_image: Image.Image = original_image.resize(display.resolution)
+    palette = display._palette_blend(float(req.args.get("saturation")))
+    palette_image = Image.new("P", (1, 1))
+    palette_image.putpalette(palette + [0, 0, 0] * 248)
+    resized_image.load()
+    paletted = resized_image.convert("RGB").quantize(palette=palette_image).convert("RGBA")
+    enhancer = ImageEnhance.Color(paletted)
+    enhanced = enhancer.enhance(2)
+    enhancer2 = ImageEnhance.Brightness(enhanced)
+    image = enhancer2.enhance(2.25)
+    stream = io.BytesIO()
+    image.save(stream, "PNG")
+    res = await req.respond(content_type="image/png")
+    await res.send(stream.getvalue())
+    return 
 
 @app.get("/status")
 async def status(req: Request):
