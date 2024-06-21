@@ -1,6 +1,6 @@
 <template>
   <NavigationBar></NavigationBar>
-  <v-progress-linear :active="uploading" :model-value="progress" indeterminate></v-progress-linear>
+  <v-progress-linear :active="uploading" indeterminate></v-progress-linear>
   <v-container :class='fade.join(" ")'>
     <v-responsive class="align-center text-center fill-height">
       <v-container class="d-flex">
@@ -41,9 +41,10 @@ import { ref } from "vue";
 let showBar = ref(false);
 let statusObject = ref({ displayData: { image: "" } });
 let fade = ref(["fill-height"]);
+let preview = ref("");
 
 function previewImage() {
-  statusObject.value.displayData.image = "/preview_image?saturation=" + document.getElementById("sat").value;
+  preview.value = "/preview_image?saturation=" + document.getElementById("sat").value;
 }
 
 function selectImage() {
@@ -60,6 +61,7 @@ function selectImage() {
 export default {
   data: () => ({
     displayStatus: statusObject,
+    preview,
     uploading: showBar,
     group: null,
     fade
@@ -68,11 +70,17 @@ export default {
   watch: {
     group() {
       this.uploading = showBar,
-        this.displayStatus = {};
+        this.displayStatus = {},
+        this.preview = "";
     },
   },
   beforeMount() {
-    fetch("http://hyperdeath.local:8000/status").then(res => res.json()).then(res => this.displayStatus = res);
+    fetch("http://hyperdeath.local:8000/status").then(res => res.json()).then(res => {
+      this.displayStatus = res;
+      if (res.currentDisplay == "image") {
+        this.preview = res.displayData.image;
+      }
+    });
   }
 }
 </script>
