@@ -8,6 +8,7 @@
     <v-navigation-drawer v-model="drawer" temporary>
         <v-list>
           <v-list-item prepend-icon="mdi-home" title="Home" value="home" to="/"></v-list-item>
+          <v-list-item prepend-icon="mdi-monitor" title="Display" value="display" to="/display"></v-list-item>
           <v-list-item prepend-icon="mdi-upload" title="Upload" value="upload" to="upload"></v-list-item>
         </v-list>
     </v-navigation-drawer>

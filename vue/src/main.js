@@ -8,6 +8,7 @@
 import App from './App.vue';
 import MainPage from "@/components/MainPage.vue";
 import UploadPage from "@/components/UploadPage.vue";
+import DisplayPage from "@/components/DisplayPage.vue";
 
 // Composables
 import { createApp } from 'vue';
@@ -23,6 +24,7 @@ const router = createRouter({
     routes: [
         { path: "/", name: "Home", component: MainPage },
         { path: "/upload", name: "Upload", component: UploadPage },
+        { path: "/display", name: "Display", component: DisplayPage}
     ]
 });
 

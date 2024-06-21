@@ -51,7 +51,8 @@ async def pick_image(req: Request):
     display = Inky()
     image = Image.open("." + req.json["image"])
     resizedimage = image.resize(display.resolution)
-    display.set_image(resizedimage, saturation=1)
+    saturation = req.json.get("saturation") or 1
+    display.set_image(resizedimage, saturation=saturation)
     display.show()
     try: 
         display.wait_for_window_close()
