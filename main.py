@@ -84,7 +84,7 @@ async def preview_image(req: Request):
 async def status(req: Request):
     res: JSONResponse = json({"currentDisplay": mode}, headers={"Access-Control-Allow-Origin": "*"})
     if mode == "image": 
-        res.append({"displayData": {"image": current_image}})
+        res.update({"displayData": {"image": current_image}})
     return res
 
 app.static("/uploads", "./uploads", name="uploads")
